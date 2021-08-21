@@ -10,7 +10,7 @@ export function get_Home_Multidata() {
 // 请求商品列表
 export function get_Home_Goods(type, page) {
   return request({
-    url: 'home/data',
+    url: '/home/data',
     params: {
       type,
       page

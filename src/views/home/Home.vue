@@ -3,6 +3,7 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
+    <tab-control :titles="['流行','新款','精选']" class="tab-control" @tabClick="tabClick" v-show="isFixed" ref="tabControl2"/>
     <scroll class="content" ref="scroll" :probeType="3" :pullUpLoad="true"
       @scrollMove="scrollMove"
       @pullingUp="loadMore">
@@ -30,6 +31,7 @@
   import BackTop from '@/components/content/backTop/BackTop'
 
   import { get_Home_Multidata, get_Home_Goods } from '@/network/home'
+  import { debounce } from '@/common/utils'
   
   export default {
     name: "Home",
@@ -62,6 +64,8 @@
         },
         currentType: 'pop',
         isShow: false,
+        tabOffsetTop: 0,
+        isFixed: false
       }
     },
     created() {
@@ -70,8 +74,16 @@
       this.getHomeGoods('new'),
       this.getHomeGoods('sell')
     },
+    mounted() {
+      const refresh = debounce(()=>{
+        this.$refs.scroll.refresh
+      }, 100)
+      this.$bus.$on('itemImageLoad', () => {
+        refresh()
+      })
+    },
     updated() {
-      // this.tabOffsetTop = this.$refs.tabControl.$el.offsetTop
+      if(this.tabOffsetTop === 0) this.tabOffsetTop = this.$refs.tabControl1.$el.offsetTop
     },
     methods: {
       /** 
@@ -106,6 +118,8 @@
         } else if(item === 2) {
           this.currentType = 'sell'
         }
+        this.$refs.tabControl1.currentIndex = item
+        this.$refs.tabControl2.currentIndex = item
       },
       // 回到顶部
       topClick() {
@@ -114,11 +128,10 @@
       // 监听滑动，显示或隐藏top键
       scrollMove(position) {
         this.isShow = position < -650
-        this.isTabFixed = position > this.tabOffsetTop
+        this.isFixed = position <= -this.tabOffsetTop
       },
       // 监听触底，获取新的数据
-      loadMore(aaa) {
-        console.log(aaa)
+      loadMore() {
         this.getHomeGoods(this.currentType)
       }
     }
@@ -127,9 +140,9 @@
 
 <style scoped>
   #home {
-    /* position: relative; */
+    position: relative;
     height: 100vh;
-    padding: 44px 0 50px;
+    padding: 0 0 50px;
   }
   .home-nav {
     position: fixed;
@@ -150,12 +163,12 @@
     z-index: 9;
   }
   .content {
-    height: calc(100% - 93px);
-    /* overflow: hidden;
+    /* height: calc(100% - 93px); */
+    overflow: hidden;
     position: absolute;
     top: 44px;
     bottom: 49px;
     left: 0;
-    right: 0; */
+    right: 0;
   }
 </style>
