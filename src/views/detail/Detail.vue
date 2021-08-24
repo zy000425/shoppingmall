@@ -134,7 +134,9 @@
         product.price = this.goods.realPrice
         product.iid = this.iid
 
-        this.$store.commit('addToCart', product)
+        this.$store.dispatch('addCart', product).then(res => {
+          this.$toast.show('添加购物车成功！')
+        })
       }
     }
   }

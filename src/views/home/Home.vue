@@ -11,7 +11,7 @@
       <recommend-view :recommends="recommends"/>
       <div class="recommend-bg">
         <a href="https://act.mogujie.com/zzlx67">
-          <img src="@/assets/img/home/recommend_bg.jpg" alt="">
+          <img src="@/assets/img/home/recommend_bg.jpg">
         </a>
       </div>
       <tab-control :titles="['流行','新款','精选']" class="tab-control" @tabClick="tabClick" ref="tabControl1"/>

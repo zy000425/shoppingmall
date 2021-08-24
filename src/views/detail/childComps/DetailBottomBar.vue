@@ -35,6 +35,7 @@
       },
       addCart() {
         this.$emit('addCart')
+        this.$bus.$emit('addCart')
       }
     }
   }
